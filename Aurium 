@@ -1,1 +1,359 @@
-index.html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurum Business Pro</title>
+
+<style>
+/* Conservation de tes styles et ajout des nouveaux pour le design Emirates */
+body{margin:0;font-family:Arial;background:#f4f7f9;color:#333;} /* Fond clair comme sur la photo */
+#auth{text-align:center;margin-top:40px;color:#fff;background:linear-gradient(135deg,#001f4d,#0a2a5c,#d4a437);padding:20px;height:100vh;}
+input,select,button{margin:8px;padding:12px;width:85%;border:none;border-radius:10px;}
+button{background:gold;font-weight:bold;cursor:pointer;}
+#app{display:none;padding-bottom:80px;}
+.page{display:none;padding:15px;}
+.active{display:block;}
+
+/* Barre de navigation style image */
+.nav{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:#1a222d;padding:10px 0;z-index:1000;}
+.nav button{background:none;color:#fff;width:auto;font-size:12px;display:flex;flex-direction:column;align-items:center;}
+
+/* Design des cartes VIP (Produits en bas) */
+.card{background:#fff;color:#000;padding:15px;border-radius:20px;margin:15px 0;box-shadow:0 4px 10px rgba(0,0,0,0.1);border:none;}
+.card img{width:100%;border-radius:15px;height:180px;object-fit:cover;}
+
+/* NOUVEAUX STYLES POUR L'ACCUEIL */
+.header-emirates {display:flex; justify-content:space-between; align-items:center; padding:10px; background:#fff; color:#1a222d; font-weight:bold;}
+.user-badge {background:#e0e7ff; color:#5a67d8; padding:5px 12px; border-radius:15px; font-size:14px;}
+.banner-img {width:100%; border-radius:25px; margin-top:10px;}
+.balance-section {background:#fff; border-radius:25px; padding:25px; margin-top:15px; box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+.balance-section p {margin:0; color:#888; font-size:13px; font-weight:bold;}
+.balance-section h1 {margin:5px 0 0 0; font-size:32px; color:#1a222d;}
+.revenue-bar {background:#1a222d; color:#fff; display:flex; justify-content:space-between; padding:15px 20px; border-radius:20px; margin-top:15px;}
+.grid-actions {display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-top:20px;}
+.action-btn {background:#fff; border-radius:15px; padding:15px 5px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05); color:#1a222d; font-size:12px; font-weight:bold;}
+.section-title {color:#1a222d; font-size:18px; font-weight:bold; margin-top:25px; margin-left:5px;}
+
+.support{background:#25D366;color:#fff;padding:10px;border-radius:10px;text-align:center;margin-bottom:10px;}
+.support a{color:#fff;font-weight:bold;text-decoration:none;}
+#installBtn{display:none;position:fixed;top:10px;right:10px;z-index:999;}
+
+/* --- NOUVEAUX STYLES AJOUTÉS POUR LA PAGE RÉGLAGES (AURRIUM) --- */
+.profile-card { background: white; border-radius: 25px; padding: 30px; text-align: center; margin-bottom: 20px; }
+.profile-avatar { background: #d4a437; width: 80px; height: 80px; border-radius: 20px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; position: relative;}
+.check-mark { position: absolute; bottom: -5px; right: -5px; background: #2ecc71; border: 2px solid white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.action-grid { display: flex; gap: 15px; margin: 20px 0; }
+.btn-gold { background: #d4a437 !important; color: white !important; flex: 1; border-radius: 15px !important; margin: 0 !important; }
+.btn-dark { background: #1a1a1a !important; color: white !important; flex: 1; border-radius: 15px !important; margin: 0 !important; }
+.menu-container { background: white; border-radius: 20px; overflow: hidden; }
+.menu-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid #f4f4f4; cursor: pointer; }
+.menu-row:last-child { border-bottom: none; }
+.menu-info { display: flex; align-items: center; gap: 15px; }
+.logout-box { margin-top: 30px; }
+.btn-logout-new { background: #fff5f5 !important; color: #ff4d4d !important; width: 100% !important; border-radius: 15px !important; }
+</style>
+</head>
+
+<body>
+
+<button id="installBtn">Installer l'app</button>
+
+<div id="auth">
+<h2>💎 Aurum Business</h2>
+<input id="phone" placeholder="Numéro">
+<input id="pass" type="password" placeholder="Mot de passe">
+<input id="ref" placeholder="Code parrain">
+<select id="country">
+<option>Burkina Faso</option>
+<option>Côte d'Ivoire</option>
+<option>Mali</option>
+<option>Sénégal</option>
+<option>Cameroun</option>
+<option>Togo</option>
+<option>Bénin</option>
+</select>
+<button onclick="register()">S'inscrire</button>
+<button onclick="login()">Connexion</button>
+</div>
+
+<div id="app">
+    <div class="header-emirates">
+        <span>EMIRATES</span>
+        <span class="user-badge" id="displayId">ID</span>
+    </div>
+
+    <div id="home" class="page active"></div>
+    <div id="orders" class="page"></div>
+    <div id="team" class="page"></div>
+    <div id="me" class="page"></div>
+
+    <div class="nav">
+        <button onclick="show('home')">🏠<br>Accueil</button>
+        <button onclick="show('orders')">🚀<br>Investir</button>
+        <button onclick="show('team')">👥<br>Réseau</button>
+        <button onclick="show('me')">⚙️<br>Réglages</button>
+    </div>
+</div>
+
+<script>
+/* ================= VARIABLES (Inchangées) ================= */
+let auth = document.getElementById("auth");
+let app = document.getElementById("app");
+let home = document.getElementById("home");
+let team = document.getElementById("team");
+let ordersPage = document.getElementById("orders");
+let mePage = document.getElementById("me");
+
+let users=JSON.parse(localStorage.getItem("users"))||[];
+let orders=JSON.parse(localStorage.getItem("orders"))||[];
+let transactions=JSON.parse(localStorage.getItem("tx"))||[];
+let user=null;
+
+/* ================= INSTALL PWA ================= */
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("installBtn").style.display = "block";
+});
+document.getElementById("installBtn").addEventListener("click", () => {
+  deferredPrompt.prompt();
+});
+
+/* ================= REF LINK ================= */
+window.onload = () => {
+let url = new URL(window.location.href);
+let ref = url.searchParams.get("ref");
+if(ref) document.getElementById("ref").value = ref;
+};
+
+const products=[
+{name:"VIP1",price:3000,daily:750,total:45500,duration:60,img:"https://images.unsplash.com/photo-1610375461246-83df859d849d"},
+{name:"VIP2",price:15000,daily:1440,total:43200,duration:30,img:"https://images.unsplash.com/photo-1621416894569-0f39ed31d247"},
+{name:"VIP3",price:40000,daily:19200,total:192000,duration:10,img:"https://images.unsplash.com/photo-1605792657660-596af9009e82"},
+{name:"VIP4",price:60000,daily:52800,total:528000,duration:10,img:"https://images.unsplash.com/photo-1611078489935-0cb964de46d6"},
+{name:"VIP5",price:100000,daily:84000,total:840000,duration:10,img:"https://images.unsplash.com/photo-1580519542036-c47de6196ba5"},
+{name:"VIP6",price:200000,daily:129984,total:1299840,duration:10,img:"https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8"},
+{name:"VIP7",price:350000,daily:246720,total:2467200,duration:10,img:"https://images.unsplash.com/photo-1610375461246-83df859d849d"},
+{name:"VIP8",price:550000,daily:412488,total:4124880,duration:10,img:"https://images.unsplash.com/photo-1621416894569-0f39ed31d247"},
+{name:"VIP9",price:800000,daily:600000,total:6000000,duration:10,img:"https://images.unsplash.com/photo-1605792657660-596af9009e82"},
+{name:"VIP10",price:1000000,daily:800400,total:8004000,duration:10,img:"https://images.unsplash.com/photo-1611078489935-0cb964de46d6"}
+];
+
+/* ================= AUTH ================= */
+function register(){
+let ph=document.getElementById("phone").value.trim();
+let ps=document.getElementById("pass").value.trim();
+let rf=document.getElementById("ref").value.trim();
+if(!ph||!ps)return alert("Remplir champs");
+if(users.find(u=>u.phone===ph))return alert("Existe");
+let u={id:Date.now(),phone:ph,password:ps,balance:500,code:"AI"+Math.random().toString(36).substr(2,8),referrer:rf};
+users.push(u);save();alert("Compte créé");
+}
+
+function login(){
+let ph=document.getElementById("phone").value;
+let ps=document.getElementById("pass").value;
+let u=users.find(x=>x.phone==ph && x.password==ps);
+if(!u)return alert("Erreur");
+user=u;
+auth.style.display="none";
+app.style.display="block";
+document.getElementById("displayId").innerText = user.phone;
+renderAll();
+}
+
+function show(p){
+document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
+document.getElementById(p).classList.add("active");
+if(p==="orders")renderOrders();
+if(p==="team")renderTeam();
+if(p==="me")renderMe();
+}
+
+/* ================= HOME ================= */
+function renderHome(){
+let rev = transactions.filter(t=>t.user_id===user.id && t.type==="gain").reduce((s,t)=>s+t.amount,0);
+
+home.innerHTML=`
+    <img src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/5e342a106822209.5f992383e20e8.jpg" class="banner-img">
+
+    <div class="balance-section">
+        <p>SOLDE DISPONIBLE</p>
+        <h1>${user.balance} XOF</h1>
+    </div>
+
+    <div class="revenue-bar">
+        <span>Revenus cumulés</span>
+        <span>${rev} XOF</span>
+    </div>
+
+    <div class="grid-actions">
+        <div class="action-btn" onclick="deposit()">💳<br>Dépôt</div>
+        <div class="action-btn" onclick="withdraw()">🏧<br>Retrait</div>
+        <div class="action-btn" onclick="show('orders')">📊<br>Projets</div>
+        <div class="action-btn" onclick="show('me')">👤<br>Profil</div>
+    </div>
+
+    <div class="section-title">Vos Avantages Emirates</div>
+`;
+
+products.forEach((p,i)=>{
+home.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<div style="padding:5px;">
+    <h3 style="margin:10px 0;">${p.name}</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; font-size:13px; color:#666;">
+        <p>Prix: <b>${p.price} F</b></p>
+        <p>Durée: <b>${p.duration}j</b></p>
+        <p>Total: <b>${p.total} F</b></p>
+        <p>Jour: <b>${p.daily} F</b></p>
+    </div>
+    <button style="width:100%; margin-top:10px;" onclick="buy(${i})">Activer l'investissement</button>
+</div>
+</div>`;
+});
+}
+
+/* ================= ACHAT + MLM (MODIFIÉ : 27%, 2%, 1%) ================= */
+function buy(i){
+let p=products[i];
+if(user.balance<p.price){alert("Solde insuffisant");return;}
+user.balance-=p.price;
+orders.push({id:Date.now(),user_id:user.id,product:p.name,daily:p.daily,end:Date.now()+(p.duration*86400000),last:0});
+
+// Logique MLM Mise à jour
+let u1 = users.find(u=>u.code===user.referrer);
+if(u1){
+    let g1 = p.price * 0.27; u1.balance += g1; transactions.push({user_id:u1.id,type:"niveau1",amount:g1});
+    let u2 = users.find(u=>u.code===u1.referrer);
+    if(u2){ 
+        let g2 = p.price * 0.02; u2.balance += g2; transactions.push({user_id:u2.id,type:"niveau2",amount:g2});
+        let u3 = users.find(u=>u.code===u2.referrer);
+        if(u3){ 
+            let g3 = p.price * 0.01; u3.balance += g3; transactions.push({user_id:u3.id,type:"niveau3",amount:g3});
+        }
+    }
+}
+save();renderAll();alert("VIP activé");
+}
+
+function renderOrders(){
+let myOrders = orders.filter(o=>o.user_id===user.id);
+ordersPage.innerHTML="<h2 style='color:#1a222d'>Mes investissements</h2>";
+if(myOrders.length===0){ordersPage.innerHTML+="<p style='color:#666'>Aucun VIP actif</p>";return;}
+myOrders.forEach(o=>{
+ordersPage.innerHTML+=`
+<div class="card">
+<h3>${o.product}</h3>
+<p>Gain journalier: ${o.daily} F</p>
+<button onclick="claim(${o.id})">Réclamer le gain</button>
+</div>`;
+});
+}
+
+function claim(id){
+let order = orders.find(o=>o.id===id);
+if(Date.now() - order.last < 86400000){alert("Déjà pris aujourd'hui");return;}
+order.last = Date.now();
+user.balance += order.daily;
+transactions.push({user_id:user.id,type:"gain",amount:order.daily});
+save();renderAll();
+}
+
+/* ================= TEAM (MODIFIÉ : LIEN AUTOMATIQUE) ================= */
+function renderTeam(){
+let l1 = users.filter(u => u.referrer === user.code);
+let l2 = users.filter(u => l1.find(x => x.code === u.referrer));
+let l3 = users.filter(u => l2.find(x => x.code === u.referrer));
+
+// Génération automatique du lien avec le code actuel
+let link = window.location.origin + window.location.pathname + "?ref=" + user.code;
+
+team.innerHTML = `
+<h2 style="color:#1a222d">Mon Équipe</h2>
+<div class="card">
+    <p style="font-size:12px; color:#888;">Partagez votre lien pour gagner 27% (L1), 2% (L2) et 1% (L3)</p>
+    <div style="background:#f4f4f4; padding:10px; border-radius:10px; margin:10px 0; word-break: break-all; font-size:14px;">
+        ${link}
+    </div>
+    <button onclick="copy('${link}')">Copier mon lien d'invitation</button>
+    <hr>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; text-align:center; margin-top:10px;">
+        <div><b>L1</b><br>${l1.length}</div>
+        <div><b>L2</b><br>${l2.length}</div>
+        <div><b>L3</b><br>${l3.length}</div>
+    </div>
+</div>
+`;
+}
+
+/* ================= PAGE ME / RÉGLAGES (MODIFIÉE : LIENS SERVICES) ================= */
+function renderMe(){
+mePage.innerHTML=`
+    <div class="profile-card">
+        <div class="profile-avatar">
+            👤
+            <div class="check-mark">✓</div>
+        </div>
+        <h2 style="margin:5px 0;">${user.phone}</h2>
+        <p style="color:#888; font-size:14px;">Membre Gold Premium</p>
+    </div>
+
+    <div class="action-grid">
+        <button class="btn-gold" onclick="deposit()">✚ DÉPÔT</button>
+        <button class="btn-dark" onclick="withdraw()">↓ RETRAIT</button>
+    </div>
+
+    <div class="menu-container">
+        <div class="menu-row" onclick="alert('Historique bientôt disponible')">
+            <div class="menu-info"><span>📄</span> Route de transaction</div>
+            <span style="color:#ccc;">›</span>
+        </div>
+        <div class="menu-row" onclick="show('orders')">
+            <div class="menu-info"><span>💎</span> Mes projets Aurium</div>
+            <span style="color:#ccc;">›</span>
+        </div>
+        <div class="menu-row" onclick="window.open('https://t.me/Tradingoold','_blank')">
+            <div class="menu-info"><span>✈️</span> Service client Télégramme</div>
+            <span style="color:#ccc;">›</span>
+        </div>
+        <div class="menu-row" onclick="window.open('https://t.me/Tradingoold','_blank')">
+            <div class="menu-info"><span>👥</span> Communauté Aurium</div>
+            <span style="color:#ccc;">›</span>
+        </div>
+    </div>
+
+    <div class="logout-box">
+        <button class="btn-logout-new" onclick="logout()">⏻ Se déconnecter</button>
+    </div>
+`;
+}
+
+/* ================= DÉPÔT (MODIFIÉ : LIEN WESTPAY) ================= */
+function deposit(){
+    // Redirection directe vers ton lien de paiement WestPay
+    window.open("https://westpay.cloud/link/yum3cdaamouf08cr", "_blank");
+}
+
+function withdraw(){
+let a=prompt("Montant du retrait");
+if(!a || a>user.balance)return alert("Erreur");
+user.balance-=parseInt(a);
+transactions.push({user_id:user.id,type:"retrait",amount:parseInt(a)});
+save();renderAll();
+}
+
+function copy(t){navigator.clipboard.writeText(t);alert("Lien d'invitation copié !");}
+function logout(){location.reload();}
+function save(){
+localStorage.setItem("users",JSON.stringify(users));
+localStorage.setItem("orders",JSON.stringify(orders));
+localStorage.setItem("tx",JSON.stringify(transactions));
+}
+function renderAll(){renderHome();renderOrders();renderTeam();renderMe();}
+</script>
+</body>
+</html>
